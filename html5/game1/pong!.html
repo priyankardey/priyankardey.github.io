@@ -1,0 +1,715 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> <!--iso-8859-1" />-->
+
+<meta http-equiv="Content-Language" content="en-us" />
+
+<meta name = "author" content="Aiga"/>
+
+<meta name ="copyright" content="&copy; 2010 AIGA "/> 
+
+<meta name="description" content="AID - Student Portfolio" />
+
+<meta name="keywords" content="AID - Student Portfolio; " />
+
+<meta name="robots" content="index,follow" />
+
+<title>AID - Student Portfolio.</title>
+<link rel="stylesheet" href="../../styles/styles.css">
+<link href="../../styles/layout.css" rel="stylesheet" type="text/css" media="screen" />
+
+</head>
+
+<body>
+
+<!--div id="AigaMasthead">
+
+</div-->
+<div class = "aid_title">
+            <div class="row">
+              <div class="col-sm-4"><img src="../../styles/img/aid_logo.jpg" alt="AID_logo" width=160px/></div>
+            </div>
+        </div>
+<div id="container">
+
+<div id="content"> 
+   
+<HTML>
+  <HEAD>
+      
+      <TITLE>
+          "Pong!" 
+      </TITLE>
+      
+      <style>
+        
+            #MyCanvas{
+                
+                background-color: black;
+                
+            }
+      
+      </style>
+          
+   </HEAD>
+    
+   <BODY>
+
+       <canvas id="MyCanvas" width="800" height="600"></canvas>
+   
+        <SCRIPT>
+            
+//---------------------------------------------------------- Variable ----------------------------------------------------------
+            
+    var g_Canvas = window["MyCanvas"];
+
+    var g_Ctx = g_Canvas.getContext("2d");
+
+    var g_CanvasXpos = 0;
+
+    var g_CanvasYpos = 0;
+
+    var g_CanvasWidth = g_Canvas.width;
+
+    var g_CanvasHeight = g_Canvas.height;
+
+    var g_FrameRate = 30;
+
+    var g_TimeInterval = 1000/g_FrameRate;
+
+    var g_Half,g_Center,g_Side,g_Collision_Inside = 1;
+
+    var g_Puck = new c_Puck(g_CanvasWidth/2,g_CanvasHeight/2);
+
+    var g_Paddle_Left = new c_Paddle(0 + 10,g_CanvasHeight / 2 - 50,10,100,"white");
+
+    var g_Paddle_Right = new c_Paddle(790 - 10,g_CanvasHeight / 2 - 50,10,100,"white");
+
+    var g_Collision_Mat = new c_Paddle(375,0,50,600,"black");
+
+    var g_PuckX_Speed = 12,g_PuckY_Speed = 12;
+
+    var g_Diff,g_Rad,g_angle;
+            
+    var g_ClockCounter = 0,g_sec = 0;
+            
+    var g_IncreaseSpeed = false;
+            
+    var g_WinningPoint = 5;
+            
+    var g_Times = 1;
+            
+    var g_GameOver = false;
+            
+    var g_StartGame = false;
+
+    var g_LeftPlayer_Score = 0,g_RightPlayer_Score = 0;
+
+    var setIntId = setInterval(f_GameLoop,g_TimeInterval)
+
+    window.addEventListener("keydown", f_KeyPressed)
+
+    window.addEventListener("keyup", f_KeyReleased)
+
+    function f_KeyPressed(e){
+
+        if(e.keyCode == 38){
+
+            g_Paddle_Right.Move_Up = true;
+            
+            e.preventDefault();
+
+        }
+
+        if(e.keyCode == 40){
+
+            g_Paddle_Right.Move_Down = true;
+            
+            e.preventDefault();
+
+        }
+
+        if(e.keyCode == 87){
+
+            g_Paddle_Left.Move_Up = true;
+            
+            e.preventDefault();
+
+        }
+
+        if(e.keyCode == 83){
+
+            g_Paddle_Left.Move_Down = true;
+            
+            e.preventDefault();
+
+        }
+        
+        if(e.keyCode == 32){
+            
+            f_Reset();
+            
+            g_StartGame = false;
+            
+            e.preventDefault();
+            
+        }
+
+    }
+
+    function f_KeyReleased(e){
+
+        if(e.keyCode == 38){
+
+            g_Paddle_Right.Move_Up = false;
+
+        }
+
+        if(e.keyCode == 40){
+
+            g_Paddle_Right.Move_Down = false;
+
+        }
+
+        if(e.keyCode == 87){
+
+            g_Paddle_Left.Move_Up = false;
+
+        }
+
+        if(e.keyCode == 83){
+
+            g_Paddle_Left.Move_Down = false;
+
+        }
+
+    }
+
+    function c_Puck(l_Xpos,l_Ypos){
+
+        this.Xpos = l_Xpos;
+
+        this.Ypos = l_Ypos;
+
+        this.Xspeed = 12;
+
+        this.Yspeed = -1;
+
+        this.Angle = (Math.random() * (Math.PI/4 - (-Math.PI/4 + 3))) - (-Math.PI/4);
+
+        this.Radius = 10;
+
+        this.StartingAngle = 0;
+
+        this.EndingAngle = Math.PI * 2;
+
+        this.m_Draw_Puck = m_Draw_Puck;
+
+        this.m_Move_Puck = m_Move_Puck;
+
+        this.m_Edge_Cases_Along_Y = m_Edge_Cases_Along_Y;
+
+    }
+
+    function m_Draw_Puck(l_Ctx){
+
+        l_Ctx.fillStyle = "white";
+
+        l_Ctx.beginPath();
+
+        l_Ctx.arc(this.Xpos, this.Ypos,this.Radius, this.StartingAngle,this.EndingAngle);
+
+        l_Ctx.closePath();
+
+        l_Ctx.fill();
+
+    }
+
+    function m_Move_Puck(){
+
+        this.Xpos += this.Xspeed; //* Math.cos(this.Angle);
+
+        this.Ypos += this.Yspeed; //* Math.sin(this.Angle);
+
+    }
+
+    function m_Edge_Cases_Along_Y(){
+
+        if(this.Ypos < 0 + this.Radius || this.Ypos > 600 - this.Radius){
+
+            this.Yspeed *= -1;
+
+        }
+
+    }
+
+    function c_Paddle(l_Xpos,l_Ypos,l_Paddle_Width,l_Paddle_Height,l_Color){
+
+        this.Xpos = l_Xpos
+
+        this.Ypos = l_Ypos;
+
+        this.Color = l_Color;
+
+        this.Paddle_Width = l_Paddle_Width;
+
+        this.Paddle_Height = l_Paddle_Height;
+
+        this.Move_Up = false;
+
+        this.Move_Down = false;
+
+        this.m_Draw_Paddle = m_Draw_Paddle;
+
+    }
+
+    function m_Draw_Paddle(l_Ctx){
+
+        l_Ctx.fillStyle = this.Color;
+
+        l_Ctx.fillRect(this.Xpos,this.Ypos,this.Paddle_Width,this.Paddle_Height);
+
+    }
+
+    function f_Reset_Puck(){
+
+        if(g_Puck.Xpos < 0 - g_Puck.Radius){
+
+            g_Puck.Xpos = g_CanvasWidth/2;
+
+            g_Puck.Ypos = g_CanvasHeight/2;
+
+            g_PuckX_Speed = 12;
+
+            g_PuckY_Speed = 12;
+            
+            g_ClockCounter = 0;
+            
+            g_sec = 0;
+            
+            g_IncreaseSpeed = false;
+
+            if(Math.random() < 0.5){
+
+                g_Puck.Xspeed *= -1;
+
+            }
+            
+            if(Math.random() < 0.5){
+
+                g_Puck.Yspeed *= -1;
+
+            }
+
+            g_Puck.Angle = (Math.random() * (Math.PI/4 - (-Math.PI/4 + 3))) - (-Math.PI/4);
+
+            g_RightPlayer_Score++;
+
+        }
+
+        if(g_Puck.Xpos > 800 + g_Puck.Radius){
+
+            g_Puck.Xpos = g_CanvasWidth/2;
+
+            g_Puck.Ypos = g_CanvasHeight/2;
+
+            g_PuckX_Speed = 12;
+
+            g_PuckY_Speed = 12;
+            
+            g_ClockCounter = 0;
+            
+            g_sec = 0;
+            
+            g_IncreaseSpeed = false;
+
+            if(Math.random() < 0.5){
+
+                g_Puck.Xspeed *= -1;
+
+            }
+            
+            if(Math.random() < 0.5){
+
+                g_Puck.Yspeed *= -1;
+
+            }
+
+            g_Puck.Angle = (Math.random() * (Math.PI/4 - (-Math.PI/4 + 3))) - (-Math.PI/4);
+
+            g_LeftPlayer_Score++;
+
+        }
+
+    }
+
+    function f_Calculating_Edge_Cases(){
+
+        g_Puck.m_Edge_Cases_Along_Y();
+
+        f_Reset_Puck();
+
+    }
+
+    function f_Collision_Calculation(l_Circle,l_Rect,l_Collision_Inside){
+
+        g_Half = { x: l_Rect.Paddle_Width / 2, y: l_Rect.Paddle_Height / 2};
+
+        g_Center = { x: l_Circle.Xpos - (l_Rect.Xpos + g_Half.x), y: l_Circle.Ypos - (l_Rect.Ypos + g_Half.y)};
+
+        g_Side = { x: Math.abs(g_Center.x) - g_Half.x, y: Math.abs(g_Center.y) - g_Half.y};
+
+        if(g_Side.x > l_Circle.Radius || g_Side.y > l_Circle.Radius)//outside
+
+            {return false;}
+
+        if(g_Side.x < -l_Circle.Radius && g_Side.y > -l_Circle.Radius)//inside
+
+            {return l_Collision_Inside;}
+
+        if(g_Side.x < 0 || g_Side.y < 0)//intersects side or corner
+
+            {return true;}
+
+        return g_Side.x * g_Side.x + g_Side.y * g_Side.y < l_Circle.Radius * l_Circle.Radius;//Circle is near the corner
+
+    }
+            
+    function f_Calculating_Collision_WithLeft_Paddle(){
+        
+        if(f_Collision_Calculation(g_Puck,g_Paddle_Left,g_Collision_Inside)){
+            
+            g_Diff = g_Puck.Ypos - (g_Paddle_Left.Ypos - g_Paddle_Left.Paddle_Height / 2);
+
+            g_angle = f_Making_Map_Method_in_Vanially_JavaScript(g_Diff, 0, g_Paddle_Left.Paddle_Height, -Math.PI/180 * (175), -Math.PI/180 * (275));
+
+            g_Puck.Xspeed = g_PuckX_Speed * Math.sin(g_angle);
+
+            g_Puck.Yspeed = g_PuckY_Speed * Math.cos(g_angle);
+
+            g_Puck.Xpos = g_Paddle_Left.Xpos + g_Paddle_Left.Paddle_Width / 2 + g_Puck.Radius;
+            
+        }
+        
+    }
+            
+    function f_Calculating_Collision_WithRight_Paddle(){
+        
+        if(f_Collision_Calculation(g_Puck,g_Paddle_Right,g_Collision_Inside)){
+            
+            g_Diff = g_Puck.Ypos - (g_Paddle_Right.Ypos - g_Paddle_Right.Paddle_Height / 2);
+
+            g_angle = f_Making_Map_Method_in_Vanially_JavaScript(g_Diff, 0, g_Paddle_Right.Paddle_Height, Math.PI/180 * (175), Math.PI/180 * (275));
+
+            g_Puck.Xspeed = g_PuckX_Speed * Math.sin(g_angle);
+
+            g_Puck.Yspeed = g_PuckY_Speed * Math.cos(g_angle);
+
+            g_Puck.Xpos = g_Paddle_Right.Xpos - g_Paddle_Right.Paddle_Width / 2 - g_Puck.Radius;
+            
+        }
+        
+    }
+
+    function f_Making_Map_Method_in_Vanially_JavaScript(Value,a,b,c,d){
+
+        Value = (Value - a) / (b - a);
+
+        return c + Value * (d - c); 
+
+    }
+            
+            
+
+    function f_Moving_Function(){
+
+        g_Puck.m_Move_Puck();
+
+        if(g_Paddle_Right.Move_Up && g_Paddle_Right.Ypos !== 0){
+
+            g_Paddle_Right.Ypos += -5;
+
+        }
+
+        if(g_Paddle_Right.Move_Down && g_Paddle_Right.Ypos !== 500){
+
+            g_Paddle_Right.Ypos += 5;
+
+        }
+
+        if(g_Paddle_Left.Move_Up && g_Paddle_Left.Ypos !== 0){
+
+            g_Paddle_Left.Ypos += -5;
+
+        }
+
+        if(g_Paddle_Left.Move_Down && g_Paddle_Left.Ypos !== 500){
+
+            g_Paddle_Left.Ypos += 5;
+
+        }
+
+    }
+
+    function f_Draw_Function(l_Ctx){
+
+        g_Paddle_Left.m_Draw_Paddle(l_Ctx);
+
+        g_Paddle_Right.m_Draw_Paddle(l_Ctx);
+
+        g_Puck.m_Draw_Puck(l_Ctx);
+        
+        l_Ctx.fillStyle = "silver";
+            
+        l_Ctx.font = "25px Arial";
+            
+        l_Ctx.fillText("Match Winning point = " + g_WinningPoint, 267, 35);
+
+    }
+
+    function f_Draw_Score(l_Ctx){
+
+        l_Ctx.fillStyle = "silver";
+
+        l_Ctx.font = "35px Arial";
+
+        l_Ctx.fillText((g_LeftPlayer_Score < 10 ? "0" + g_LeftPlayer_Score:g_LeftPlayer_Score),55 ,45);
+
+        l_Ctx.fillText((g_RightPlayer_Score < 10 ? "0" + g_RightPlayer_Score:g_RightPlayer_Score),705 ,45);
+
+    }
+
+    function f_Increase_Puck_Speed(){
+
+        if(g_ClockCounter >= 30 && !g_IncreaseSpeed){
+            
+            g_ClockCounter = 0;
+            
+            g_sec++;
+            
+            console.log(g_sec);
+            
+            if(g_sec >= 10){
+                
+                g_sec = 0;
+                
+                if(g_Puck.Xspeed > 0){
+                    
+                    g_PuckX_Speed -= 1;
+                    
+                }else if(g_Puck.Xspeed < 0){
+                    
+                    console.log("no");
+                    
+                    g_PuckX_Speed += 1;
+                    
+                }
+                
+            }
+                
+        }
+
+        if(g_ClockCounter >= 30){
+            
+            g_ClockCounter = 0;
+            
+        }
+        
+        g_ClockCounter++;
+
+    }
+            
+    function f_WinningCondition(l_Ctx){
+        
+        if(g_LeftPlayer_Score >= g_WinningPoint){
+            
+            console.log("yes");
+            
+            l_Ctx.fillStyle = "silver";
+            
+            l_Ctx.font = "35px Arial";
+            
+            l_Ctx.fillText("Left Player Wins", 275, 250);
+            
+            l_Ctx.fillText("Game Over", 310, 350);
+            
+            l_Ctx.fillText("Press Space Bar To Restart", 200, 425);
+            
+            g_GameOver = true;
+            
+        }
+        
+        if(g_RightPlayer_Score >= g_WinningPoint){
+            
+            console.log("yes");
+            
+            l_Ctx.fillStyle = "silver";
+            
+            l_Ctx.font = "35px Arial";
+            
+            l_Ctx.fillText("Right Player Wins", 275, 250);
+            
+            l_Ctx.fillText("Game Over", 310, 350);
+            
+            l_Ctx.fillText("Press Space Bar To Restart", 200, 425);
+            
+            g_GameOver = true;
+            
+        }
+        
+    }
+            
+    function f_Reset(){
+        
+        g_LeftPlayer_Score = 0;
+        
+        g_RightPlayer_Score = 0;
+        
+        g_GameOver = false;
+        
+    }
+
+    //---------------------------------------------------------- GameLoop ----------------------------------------------------------
+
+    function f_GameLoop(){
+        
+        if(g_GameOver){
+            
+            return;
+            
+        }
+        
+        if(g_StartGame){
+            
+            return;
+            
+        }
+        
+        f_Calculating_Edge_Cases();
+        
+        f_Increase_Puck_Speed();
+        
+        f_Calculating_Collision_WithLeft_Paddle();
+        
+        f_Calculating_Collision_WithRight_Paddle();
+        
+        f_Moving_Function();
+
+        f_DrawCanvasAndClear();
+
+        f_Draw_Score(g_Ctx);
+        
+        f_WinningCondition(g_Ctx);
+
+        f_Draw_Function(g_Ctx);
+        
+        if(g_Times == 1){
+            
+            g_Times--;
+            
+            g_Ctx.fillStyle = "silver";
+            
+            g_Ctx.font = "35px Arial";
+            
+            g_Ctx.fillText("Press Space Bar To Start", 200, 400);
+            
+            g_Ctx.font = "18px Arial";
+        
+            g_Ctx.fillText("W - Move Up" , 75, 250);
+        
+            g_Ctx.fillText("S - Move Down" , 75, 350);
+        
+            g_Ctx.fillText("Up Arrow - Move Up ", 550, 250);
+        
+            g_Ctx.fillText("Down Arrow - Move Down ", 550, 350);
+            
+            g_StartGame = true;
+            
+        }
+
+    }
+
+    //---------------------------------------------------------- Clear Canvas and Draw it ----------------------------------------------------------
+
+    function f_DrawCanvasAndClear(){
+
+        g_Ctx.clearRect(g_CanvasXpos,g_CanvasYpos,g_CanvasWidth,g_CanvasHeight);
+
+        g_Ctx.strokeRect(g_CanvasXpos,g_CanvasYpos,g_CanvasWidth,g_CanvasHeight);
+
+    }
+            
+        </SCRIPT>
+        
+    </BODY>
+    
+</HTML>
+    
+<br /><br />
+<h3>Author: Priyankar Dey</h3>
+
+
+
+<h3>Objective:</h3>
+
+<ul>
+
+    <li>The objective of the game is to win the match by getting the match winning point first.</li>
+
+    <li>This is a two player game.</li>
+
+    <li>Points are allotted to Right Player if the puck(ball) crosses the left side of the Screen and vice versa.</li>
+    
+    <li>The game ends when either one gets the winning point.</li>
+    
+</ul>
+
+<br /><br />
+
+<h3>Logic Design and Implementation:</h3> 
+
+<ul>
+<li>Use shape Class to generate paddles and puck(ball).</li>
+
+<li>Write proper logics for controlling paddles.</li>
+
+<li>Maintain a separate class and function for puck, paddle and logic for collision. </li>
+
+<li>No destorying of variable in runtime and only use of simple logic.</li>
+
+<li>Create variables to hold the score and display.</li>
+
+<li>Create logics to determine when the game is over and display it on the screen.</li>
+
+</ul>
+
+<br /><br />
+
+<h3>Scope For Improvement:</h3>
+
+<ul>
+    <li>Implement Audio to the game.</li>
+    
+    <li>Better Visuals and Text fonts.</li>   
+    
+</ul>
+
+  </div> 
+
+  <!--content-->
+
+</div> <!-- Container ends here -->
+
+<!--  Footer -->
+
+<div id="info-site">
+
+ </div>
+
+</body>
+
+</html>

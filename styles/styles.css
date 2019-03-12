@@ -1,0 +1,57 @@
+
+@font-face {
+    font-family: calibri;
+    src: url(styles/calibri.ttf);
+}
+
+
+.aid_title {
+    align-content: center;
+    border: 1px solid #ddd;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-right: auto;
+    margin-left: auto;
+    background-color: #ffffff;
+    font-family:calibri;
+    font-size: 40px;
+   /* font-weight: bold;*/
+    text-align: left;
+ 
+}
+
+.student_info{
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-top: 50px;
+    font-size: 20px;
+    font-family:calibri;
+     text-align: left;
+}
+
+.games_list{
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+     font-size: 25px;
+    font-family:calibri;
+     text-align: left;
+}
+
+.games_list .col-sm-4{
+   // border: 0.1px solid #777777;
+    height: 252px;
+    
+}
+
+.games_list .col-sm-4  img{
+   width: 100%;
+    height: auto;
+    
+    
+    
+}
+

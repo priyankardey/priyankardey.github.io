@@ -1,0 +1,267 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> <!--iso-8859-1" />-->
+
+<meta http-equiv="Content-Language" content="en-us" />
+
+<meta name = "author" content="Aiga"/>
+
+<meta name ="copyright" content="&copy; 2010 AIGA "/> 
+
+<meta name="description" content="AID - Student Portfolio" />
+
+<meta name="keywords" content="AID - Student Portfolio; " />
+
+<meta name="robots" content="index,follow" />
+
+<title>AID - Student Portfolio.</title>
+<link rel="stylesheet" href="../../styles/styles.css">
+<link href="../../styles/layout.css" rel="stylesheet" type="text/css" media="screen" />
+
+</head>
+
+<body>
+
+<!--div id="AigaMasthead">
+
+</div-->
+<div class = "aid_title">
+            <div class="row">
+              <div class="col-sm-4"><img src="../../styles/img/aid_logo.jpg" alt="AID_logo" width=160px/></div>
+            </div>
+        </div>
+<div id="container">
+
+<div id="content"> 
+
+    
+<canvas id='myCanvas' width="288" height="512" style=' background-color:#FFF;'>
+</canvas>
+  
+<SCRIPT>
+           
+    var g_Canvas = document.getElementById("myCanvas");
+
+    var g_Ctx = g_Canvas.getContext("2d");
+
+    var g_Bird = new Image();
+
+    var g_BackGround = new Image();
+
+    var g_FrontGround = new Image();
+
+    var g_PipeTop = new Image();
+
+    var g_PipeBottom = new Image();
+
+    var g_FrameRate = 60;
+
+    var g_TimeInterval = 1000/g_FrameRate;
+
+    var g_Gap = 85;
+
+    var constant;
+
+    var g_bX = 10;
+
+    var g_bY = 150;
+
+    var g_Gravity = 1.5;
+
+    var g_Score = 0;
+
+    var g_Pipe = [];
+    
+    var g_Times = 1;
+    
+    var g_StartGame = false;
+
+    var setIntId = setInterval(f_GameLoop,g_TimeInterval)
+
+    document.addEventListener("keydown",f_MoveUp);
+
+    function f_MoveUp(e){
+        
+        if(e.keyCode == 32){
+            
+            g_bY -= 25;
+            
+            g_StartGame = false;
+        
+            e.preventDefault();
+        }
+
+    }
+
+    function f_InitImages(){
+
+        g_Bird.src = "Images/bird.png";
+
+        g_BackGround.src = "Images/BackGround.png";
+
+        g_FrontGround.src = "Images/FrontGound.png";
+
+        g_PipeTop.src = "Images/PipeTop.png";
+
+        g_PipeBottom.src = "Images/PipeBottom.png";
+
+        g_Pipe[0] = {
+
+            x : g_Canvas.width,
+            y : 0
+
+        };
+
+    }
+
+    f_InitImages();
+
+   function f_Draw(){
+
+       g_Ctx.drawImage(g_BackGround,0,0);
+
+       for(i = 0; i < g_Pipe.length; i++){
+
+           constant = g_PipeTop.height + g_Gap;
+
+           g_Ctx.drawImage(g_PipeTop,g_Pipe[i].x,g_Pipe[i].y);
+
+           g_Ctx.drawImage(g_PipeBottom,g_Pipe[i].x, g_Pipe[i].y + constant);
+
+           g_Pipe[i].x--;
+
+           if(g_Pipe[i].x == 125){
+
+               g_Pipe.push({
+
+                   x : g_Canvas.width,
+                   y : Math.floor(Math.random() * g_PipeTop.height) - g_PipeTop.height
+
+               });
+
+           }
+
+           if(g_bX + g_Bird.width >= g_Pipe[i].x && g_bX <= g_Pipe[i].x + g_PipeTop.width && (g_bY <= g_Pipe[i].y + g_PipeTop.height || g_bY + g_Bird.height >= g_Pipe[i].y + constant) || g_bY + g_Bird.height >= g_Canvas.height - g_FrontGround.height){
+
+               location.reload();
+
+           }
+
+           if(g_Pipe[i].x == 5){
+
+               g_Score++;
+
+           }
+
+       }
+
+       g_Ctx.drawImage(g_FrontGround,0,g_Canvas.height - g_FrontGround.height);
+
+       g_Ctx.drawImage(g_Bird,g_bX,g_bY);
+
+       g_bY += g_Gravity;
+
+       g_Ctx.fillStyle = "#000";
+
+       g_Ctx.font = "20px Aerial";
+
+       g_Ctx.fillText("Score : " + g_Score, 10, g_Canvas.height - 20);
+
+   }
+
+   function f_GameLoop(){
+       
+       if(g_StartGame){
+           
+           return;
+           
+       }
+
+       f_DrawCanvasAndClear();
+
+       f_Draw();
+       
+       if(g_Times == 1){
+            
+            g_Times--;
+
+            g_Ctx.fillStyle = "Black";
+
+            g_Ctx.font = "15px Arial";
+
+            g_Ctx.fillText("Press Space Bar To Start", 60, 250);
+
+            g_StartGame = true;
+           
+       }
+
+   }
+
+   function f_DrawCanvasAndClear(){
+
+        g_Ctx.clearRect(0,0,g_Canvas.width,g_Canvas.height);
+
+        g_Ctx.strokeRect(0,0,g_Canvas.width,g_Canvas.height);
+
+    }
+
+
+</SCRIPT>
+    
+<br /><br />
+<h3>Author: Priyankar Dey</h3>
+
+
+
+<h3>Objective:</h3>
+
+<ul>
+
+    <li>The objective of the game is to score the highest score.</li>
+
+    <li>The game ends when the bird hits the pipe or the ground.</li>
+    
+    <li>Pipes height are randomly generated.</li>
+    
+</ul>
+
+<br /><br />
+
+<h3>Logic Design and Implementation:</h3> 
+
+<ul>
+<li>Write proper logics to make pipe appear at random height.</li>
+
+<li>Write simple and proper logics for making the bird fly on the hit of &quot;Space&quot; key.</li>
+
+<li>Create variables to hold the score and import images.</li>
+
+<li>Write simple logic to draw images.</li>
+
+</ul>
+
+<br /><br />
+
+<h3>Scope For Improvement:</h3>
+
+<ul><li>Implement Audio to the game.</ul>
+
+  </div> 
+
+  <!--content-->
+
+</div> <!-- Container ends here -->
+
+<!--  Footer -->
+
+<div id="info-site">
+
+ </div>
+
+</body>
+
+</html>
