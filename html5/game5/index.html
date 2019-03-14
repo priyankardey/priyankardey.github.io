@@ -1,0 +1,1573 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> <!--iso-8859-1" />-->
+
+<meta http-equiv="Content-Language" content="en-us" />
+
+<meta name = "author" content="Aiga"/>
+
+<meta name ="copyright" content="&copy; 2010 AIGA "/> 
+
+<meta name="description" content="AID - Student Portfolio" />
+
+<meta name="keywords" content="AID - Student Portfolio; " />
+
+<meta name="robots" content="index,follow" />
+
+<title>AID - Student Portfolio.</title>
+<link rel="stylesheet" href="../../styles/styles.css">
+<link href="../../styles/layout.css" rel="stylesheet" type="text/css" media="screen" />
+
+</head>
+
+<body>
+
+<!--div id="AigaMasthead">
+
+</div-->
+<div class = "aid_title">
+            <div class="row">
+              <div class="col-sm-4"><img src="../../styles/img/aid_logo.jpg" alt="AID_logo" width=160px/></div>
+            </div>
+        </div>
+<div id="container">
+
+<div id="content"> 
+
+    
+<canvas id='myCanvas' width="800" height="600" style=' background-color:#FFF;'>
+</canvas>
+  
+<script>
+        
+            var g_Canvas = document.getElementById("myCanvas");
+            
+            var g_Ctx = g_Canvas.getContext("2d");
+            
+            var g_CanvasXpos = 0;
+            
+            var g_CanvasYpos = 0;
+            
+            var g_CanvasWidth = g_Canvas.width;
+            
+            var g_CanvasHeight = g_Canvas.height;
+            
+            var g_FrameRate = 30;
+            
+            var g_FrameInterval = 1000/g_FrameRate;
+            
+            var Cell = new Array();
+            
+            var Cell2 = new Array();
+            
+            var Food = new Array();
+            
+            var g_leng = 4;
+            
+            var MovepxX = new Array(50);
+            
+            var MovepxY = new Array(50);
+            
+            var x,y;
+            
+            var Timer_reset = false;
+            
+            var g_Timer,g_Minutes,g_second,g_FrameCounter,g_PointsCounter,g,g_PointsCounter2,g_TimeCounter,g_Secs,g_Times;
+            
+            var Random_food_Selection;
+            
+            var g_Cell_Xpos1,g_Cell_Ypos1,g_Cell_Width,g_Cell_Height,g_Cell_Color,g_Cell_Stroke_Color,g_Cell_Xpos2,g_Cell_Ypos2;
+            
+            var g_Snake_leng;
+            
+            var g_FoodXpos,g_FoodYpos,g_FoodWidth,g_FoodHeight,g_RandomFoodX,g_RandomFoodY,g_Food_Color;
+            
+            var g_StartGame = false;
+            
+            var g_CurrentTimes = 1;
+            
+            setInterval(f_GameLoop,g_FrameInterval)
+
+            function f_InitValue(){
+    
+                g_Cell_Xpos1 = 400;
+    
+                g_Cell_Ypos1 = 300;
+                
+                g_Cell_Xpos2 = 400;
+                
+                g_Cell_Ypos2 = 150;
+    
+                g_Cell_Width = 10;
+    
+                g_Cell_Height = 10;
+    
+                g_Cell_Color = "black";
+                
+                g_Cell_Stroke_Color = "white";
+                
+                g_Snake_leng = 50;
+                
+                g_FoodXpos = 10;
+                
+                g_FoodYpos = 10;
+                
+                g_FoodWidth = 10;
+                
+                g_FoodHeight = 10;
+                
+                g_FrameCounter = 0;
+                
+                g_TimeCounter = 0;
+                
+                g_PointsCounter = 0;
+                
+                g_PointsCounter2 = 0;
+                
+                g_Secs = 0;
+                
+                g_Times = 1;
+                
+                g_Timer = 0;
+                
+                g_Minutes = 0;
+                
+                g_second = 0;
+                
+                Random_food_Selection = Math.round(Math.random() * 3);
+                
+                g_RandomFoodX = Math.round(Math.random()*(g_CanvasWidth/g_Cell_Width - 1));
+                
+                g_RandomFoodY = Math.round(Math.random()*(g_CanvasHeight/g_Cell_Height - 1));
+                
+                g_Food_Color = "yellow";
+    
+            }
+            
+            f_InitValue();
+            
+            //console.log(Random_food_Selection);
+            
+            window.addEventListener("keydown", f_KeysPressed);
+            
+            window.addEventListener("keyup", f_KeysReleased);
+            
+            var Direction = "left";
+            
+            var Direction2 = "left";
+            
+            var keys;
+            
+            function f_KeysPressed(e){
+                
+                if(e.keyCode == 37 && Direction !== "left"){
+                    
+                    Snake_Body.MoveLeft = true;
+                    
+                    Direction = "right";
+                    
+                    e.preventDefault();
+                    
+                }
+                
+                if(e.keyCode == 38 && Direction !== "up"){
+                    
+                    Snake_Body.MoveUp = true;
+                    
+                    Direction = "down";
+                    
+                    e.preventDefault();
+                    
+                }
+                
+                if(e.keyCode == 39 && Direction !== "right"){
+                    
+                    Snake_Body.MoveRight = true;
+                    
+                    Direction = "left";
+                    
+                    e.preventDefault();
+                    
+                }
+                
+                if(e.keyCode == 40 && Direction !== "down"){
+                    
+                    Snake_Body.MoveDown = true;
+                    
+                    Direction = "up";
+                    
+                    e.preventDefault();
+                    
+                }
+                
+                if(e.keyCode == 65 && Direction2 !== "left"){
+                    
+                    Snake_Body2.MoveLeft = true;
+                    
+                    Direction2 = "right";
+                    
+                    e.preventDefault();
+                    
+                }
+                
+                if(e.keyCode == 87 && Direction2 !== "up"){
+                    
+                    Snake_Body2.MoveUp = true;
+                    
+                    Direction2 = "down";
+                    
+                    e.preventDefault();
+                    
+                }
+                
+                if(e.keyCode == 68 && Direction2 !== "right"){
+                    
+                    Snake_Body2.MoveRight = true;
+                    
+                    Direction2 = "left";
+                    
+                    e.preventDefault();
+                    
+                }
+                
+                if(e.keyCode == 83 && Direction2 !== "down"){
+                    
+                    Snake_Body2.MoveDown = true;
+                    
+                    Direction2 = "up";
+                    
+                    e.preventDefault();
+                    
+                }
+                
+                if(e.keyCode == 32){
+                    
+                    g_StartGame = false;
+                    
+                    e.preventDefault();
+                    
+                }
+                
+            }
+            
+            function f_KeysReleased(e){
+            
+                if(e.keyCode == 37){
+                    
+                    Snake_Body.MoveLeft = false;
+                    
+                }
+                
+                if(e.keyCode == 38){
+                    
+                    Snake_Body.MoveUp = false;
+                    
+                }
+                
+                if(e.keyCode == 39){
+                    
+                    Snake_Body.MoveRight = false;
+                    
+                }
+                
+                if(e.keyCode == 40){
+                    
+                    Snake_Body.MoveDown = false;
+                    
+                }
+                
+                if(e.keyCode == 65){
+                    
+                    Snake_Body2.MoveLeft = false;
+                    
+                }
+                
+                if(e.keyCode == 87){
+                    
+                    Snake_Body2.MoveUp = false;
+                    
+                }
+                
+                if(e.keyCode == 68){
+                    
+                    Snake_Body2.MoveRight = false;
+                    
+                }
+                
+                if(e.keyCode == 83){
+                    
+                    Snake_Body2.MoveDown = false;
+                    
+                }
+                
+            }
+            
+            /*function f_MoveBox(){
+                
+                if(keys[37]){
+                    
+                    Directionleft = true;
+                    
+                  Snake_Body.m_Move_Snake();
+                    
+                   // Directionleft = false;
+                    
+                }
+                
+                
+                
+                if(keys[38]){
+                    
+                    Directionup = true;
+                   
+                  Snake_Body.m_Move_Snake();
+                    
+                    //Directionup = false;
+                    
+                }
+                
+                
+                
+                 if(keys[39]){
+                 
+                     Directionright = true;
+                    
+                  Snake_Body.m_Move_Snake();
+                     
+                    // Directionright = false;
+                    
+                }
+                
+                
+                
+                 if(keys[40]){
+                     
+                    Directiondown = true;
+                   
+                  Snake_Body.m_Move_Snake();
+                     
+                     //Directiondown = false;
+                    
+                }
+                
+                //Snake_Body.m_Move_Snake();
+                
+            }*/
+            
+            
+            
+            function C_Cell(l_Xpos,l_Ypos,l_Width,l_Height,l_Color){
+    
+                this.Xpos = l_Xpos;
+    
+                this.Ypos = l_Ypos;
+    
+                this.Width = l_Width;
+    
+                this.Height = l_Height;
+    
+                this.Cell_Color = l_Color;
+    
+                this.m_Draw_Cell = m_Draw_Cell;
+    
+            }   
+
+            function m_Draw_Cell(l_Ctx){
+    
+                l_Ctx.fillStyle = this.Cell_Color;
+    
+                l_Ctx.fillRect(this.Xpos,this.Ypos,this.Width,this.Height);
+    
+                l_Ctx.strokeStyle = "white";
+    
+                l_Ctx.strokeRect(this.Xpos,this.Ypos,this.Width,this.Height);
+    
+            }
+            //-------------------------------------------------------------------------
+            function C_Snake(l_Snake_Total_leng,l_Actual_leng,l_StartXpos,l_StartYpos){
+    
+                this.Snake_Total_leng =l_Snake_Total_leng;
+    
+                this.Snake_Speed = 10;
+                this.startXpos = l_StartXpos;
+                this.startYpos = l_StartYpos;
+                
+                this.MoveLeft = false;
+                this.MoveRight = false;
+                this.MoveUp = false;
+                this.MoveDown = false;
+                
+                this.isAlive = true;
+                
+                this.tempXpos = 0;
+                this.tempYpos = 0;
+                
+                this.NodeSize = 10;
+                
+                this.xposArray = new Array(this.Snake_Total_leng * this.NodeSize);
+                
+                this.yposArray = new Array(this.Snake_Total_leng * this.NodeSize);
+                
+                this.Actual_leng = l_Actual_leng;
+                
+                this.m_Creating_Snake = m_Creating_Snake;
+                
+                this.m_Creating_Snake2 = m_Creating_Snake2;
+                
+                this.m_Drawing_Snake_Body = m_Draw_Snake_Body;
+                
+                this.m_Drawing_Snake_Body2 = m_Draw_Snake_Body2;
+                
+                this.m_Move_Snake = m_Move_Snake;
+                
+                this.m_Move_Snake2 = m_Move_Snake2;
+                
+                this.m_UpdateSnakePos = m_UpdateSnakePos;
+                
+                this.m_UpdateSnakePos2 = m_UpdateSnakePos2;
+    
+            }
+            
+            function m_Creating_Snake(){
+                
+                this.tempXpos = this.startXpos;
+                this.tempYpos =  this.startYpos;
+                
+                for(i = 0; i < this.Snake_Total_leng; i++){
+                    
+                    Cell[i] = new C_Cell(this.tempXpos,this.tempYpos,this.NodeSize,this.NodeSize,"black");
+                   this.tempXpos -= this.NodeSize;
+                    
+                }
+                
+                
+                for(i = 0; i < this.xposArray.length; i++){
+                    
+                    this.xposArray[i] = this.startXpos - i;
+                    
+                   
+                    
+                }
+                
+                for(i = 0; i < this.yposArray.length; i++){
+                    
+                    this.yposArray[i] = this.startYpos;
+                    
+                   
+                    
+                }
+          //  console.log(this.xposArray);
+               //  console.log(this.yposArray);
+            }
+            
+            function m_Creating_Snake2(){
+                
+                this.tempXpos = this.startXpos;
+                this.tempYpos =  this.startYpos;
+                
+                for(i = 0; i < this.Snake_Total_leng; i++){
+                    
+                    Cell2[i] = new C_Cell(this.tempXpos,this.tempYpos,this.NodeSize,this.NodeSize,"black");
+                   this.tempXpos -= this.NodeSize;
+                    
+                }
+                
+                
+                for(i = 0; i < this.xposArray.length; i++){
+                    
+                    this.xposArray[i] = this.startXpos - i;
+                    
+                   
+                    
+                }
+                
+                for(i = 0; i < this.yposArray.length; i++){
+                    
+                    this.yposArray[i] = this.startYpos;
+                    
+                   
+                    
+                }
+                
+            }
+            
+            function m_Draw_Snake_Body(l_Ctx){
+                
+                for(i = 0; i < this.Actual_leng; i++){
+                    
+                    Cell[i].m_Draw_Cell(l_Ctx);
+                    
+                }
+                
+            }
+            
+            function m_Draw_Snake_Body2(l_Ctx){
+                
+                for(i = 0; i < this.Actual_leng; i++){
+                    
+                    Cell2[i].m_Draw_Cell(l_Ctx);
+                    
+                }
+                
+            }
+   
+            function m_Move_Snake(){
+                
+                if(this.MoveLeft || this.MoveRight || this.MoveUp || this.MoveDown){
+                    
+                    for(k = 0; k < this.Snake_Speed; k++){
+                    
+                        for(i = 499; i > 0; i--){
+                    
+            
+                            this.xposArray[i] =  this.xposArray[i-1];
+                            this.yposArray[i] =  this.yposArray[i-1];
+                    
+                        }
+                        /* for(i = 0; i < 499; i++){
+                    
+                            this.tempPosX = this.xposArray[i + 1];
+                    
+                            this.xposArray[i + 1] = this.tempPosX2;
+                    
+                            this.tempPosX2 = this.tempPosX;
+                    
+                            //this.tempPos -= i;
+                    
+                        }
+                    
+                        for(j = 0; j < 499; j++){
+                    
+                            this.tempPosY = this.yposArray[j + 1];
+                    
+                            this.yposArray[j + 1] = this.tempPosY2;
+                    
+                            this.tempPosY2 = this.tempPosY;
+                        
+                        }*/
+                
+                        if(this.MoveLeft === true){
+                    
+                            Snake_Body.xposArray[0] -= 1;
+                    
+                        }
+                
+                        if(this.MoveRight === true){
+                    
+                            Snake_Body.xposArray[0] += 1;
+                    
+                        }
+                
+                        if(this.MoveUp === true){
+                    
+                            Snake_Body.yposArray[0] -= 1;
+                    
+                        }
+                
+                        if(this.MoveDown === true){
+                    
+                            Snake_Body.yposArray[0] += 1;
+                    
+                        }
+                    
+                    }
+                     
+                }   
+                
+            }
+            
+            function m_Move_Snake2(){
+                
+                if(this.MoveLeft || this.MoveRight || this.MoveUp || this.MoveDown){
+                    
+                    for(k = 0; k < this.Snake_Speed; k++){
+                    
+                        for(i = 499; i > 0; i--){
+                    
+            
+                            this.xposArray[i] =  this.xposArray[i-1];
+                            this.yposArray[i] =  this.yposArray[i-1];
+                    
+                        }
+                        /* for(i = 0; i < 499; i++){
+                    
+                            this.tempPosX = this.xposArray[i + 1];
+                    
+                            this.xposArray[i + 1] = this.tempPosX2;
+                    
+                            this.tempPosX2 = this.tempPosX;
+                    
+                            //this.tempPos -= i;
+                    
+                        }
+                    
+                        for(j = 0; j < 499; j++){
+                    
+                            this.tempPosY = this.yposArray[j + 1];
+                    
+                            this.yposArray[j + 1] = this.tempPosY2;
+                    
+                            this.tempPosY2 = this.tempPosY;
+                        
+                        }*/
+                
+                        if(this.MoveLeft === true){
+                    
+                            Snake_Body2.xposArray[0] -= 1;
+                    
+                        }
+                
+                        if(this.MoveRight === true){
+                    
+                            Snake_Body2.xposArray[0] += 1;
+                    
+                        }
+                
+                        if(this.MoveUp === true){
+                    
+                            Snake_Body2.yposArray[0] -= 1;
+                    
+                        }
+                
+                        if(this.MoveDown === true){
+                    
+                            Snake_Body2.yposArray[0] += 1;
+                    
+                        }
+                    
+                    }
+                     
+                }
+                
+            }
+            
+            function m_UpdateSnakePos(){
+                
+                for(i = 0; i < this.Snake_Total_leng; i++){
+                    
+                    Cell[i].Xpos = this.xposArray[i * 10];
+                    
+                    Cell[i].Ypos = this.yposArray[i * 10];
+                    
+                }
+                
+            }
+            
+            function m_UpdateSnakePos2(){
+                
+                for(i = 0; i < this.Snake_Total_leng; i++){
+                    
+                    Cell2[i].Xpos = this.xposArray[i * 10];
+                    
+                    Cell2[i].Ypos = this.yposArray[i * 10];
+                    
+                }
+                
+            }
+            
+            //-------------------------------------------------------------------------------
+            
+            function C_Food(l_Xpos,l_Ypos,l_RandomX,l_RandomY,l_Width,l_Height,l_Color){
+                
+                this.Xpos = l_Xpos * l_RandomX;
+                
+                this.Ypos = l_Ypos * l_RandomY;
+                
+                this.Width = l_Width;
+                
+                this.Height = l_Height;
+                
+                this.FoodColor = l_Color;
+                
+                this.m_Draw_Food_on_Canvas = m_Draw_Food_on_Canvas;
+                
+            }
+            
+            function m_Draw_Food_on_Canvas(l_Ctx){
+                
+                l_Ctx.fillStyle = this.FoodColor;
+                
+                l_Ctx.fillRect(this.Xpos,this.Ypos,this.Width,this.Height);
+                
+                l_Ctx.strokeStyle = "black";
+                
+                l_Ctx.strokeRect(this.Xpos,this.Ypos,this.Width,this.Height);
+                
+            }
+            
+            function f_food(){
+                
+                Food[0].FoodColor = "yellow";//Good food with balanced diet and lots of carbohydrate,fiber and protein(increase snake speed).
+                
+                Food[1].FoodColor = "red";//normally abnormal food may lead to sinking of the snake(decrease snake size).
+                
+                Food[2].FoodColor = "green";//normal food good for snakes health(increase snake size).
+                
+                Food[3].FoodColor = "orange";//fast food lots of fats(decrease snake speed).
+                
+            }
+            
+            function f_Creating_Food_on_Canvas(l_Ctx){
+                
+                switch(Random_food_Selection) {
+                        
+                    case 0:
+                        
+                        Food[0].m_Draw_Food_on_Canvas(l_Ctx);
+                        
+                        break;
+                        
+                    case 1:
+                        
+                        Food[1].m_Draw_Food_on_Canvas(l_Ctx);
+                        
+                        break;
+                        
+                    case 2:
+                        
+                        Food[2].m_Draw_Food_on_Canvas(l_Ctx);
+                        
+                        break;
+                        
+                    case 3:
+                        
+                        Food[3].m_Draw_Food_on_Canvas(l_Ctx);
+                        
+                        break;
+                        
+                }
+                
+            }
+            
+            function f_Collision(){
+                
+                if(Cell[0].Xpos <= 0 + 9 || Cell[0].Ypos <= 0 + 9 || Cell[0].Xpos >= g_CanvasWidth - 9 || Cell[0].Ypos >= g_CanvasHeight - 9){
+                    
+                    console.log("Collision with canvas wall");
+                    
+                    Snake_Body.isAlive = false;
+                    
+                }
+                
+                if(Cell2[0].Xpos <= 0 + 9 || Cell2[0].Ypos <= 0 + 9 || Cell2[0].Xpos >= g_CanvasWidth - 9 || Cell2[0].Ypos >= g_CanvasHeight - 9){
+                    
+                    console.log("Collision with canvas wall");
+                    
+                    Snake_Body2.isAlive = false;
+                    
+                }
+                
+                
+                
+                if(Cell[0].Xpos + Cell[0].Width > Food[0].Xpos && Cell[0].Ypos + Cell[0].Height > Food[0].Ypos && Cell[0].Xpos < Food[0].Xpos + Food[0].Width && Cell[0].Ypos < Food[0].Ypos + Food[0].Height){
+                    
+                    Timer_reset = true;
+                    
+                    if(Random_food_Selection == 0){
+                        
+                        console.log("Speed increased");
+                        
+                        Snake_Body.Snake_Speed++;
+                        
+                        console.log(Snake_Body.Snake_Speed);
+                
+                        g_RandomFoodX = Math.round(Math.random()*(g_CanvasWidth/g_Cell_Width - 1));
+                
+                        g_RandomFoodY = Math.round(Math.random()*(g_CanvasHeight/g_Cell_Height - 1));
+                        
+                        Random_food_Selection = Math.round(Math.random() * 3);
+                        
+                        for(i = 0; i < 5; i++){
+                
+                            Food[i] = new C_Food(g_FoodXpos,g_FoodYpos,g_RandomFoodX,g_RandomFoodY,g_FoodWidth,g_FoodHeight,g_Food_Color);
+                
+                        }
+                        
+                        f_Creating_Food_on_Canvas(g_Ctx);
+                        
+                        console.log(g_RandomFoodX);
+                        
+                        console.log(g_RandomFoodY);
+                        
+                        g_PointsCounter++;
+                         
+                    }
+                    
+                    if(Random_food_Selection == 1){
+                        
+                        console.log("Size decrease");
+                        
+                        Snake_Body.Actual_leng--;
+                        
+                        console.log(Snake_Body.Actual_leng);
+                
+                        g_RandomFoodX = Math.round(Math.random()*(g_CanvasWidth/g_Cell_Width - 1));
+                
+                        g_RandomFoodY = Math.round(Math.random()*(g_CanvasHeight/g_Cell_Height - 1));
+                        
+                        Random_food_Selection = Math.round(Math.random() * 3);
+                        
+                        for(i = 0; i < 5; i++){
+                
+                            Food[i] = new C_Food(g_FoodXpos,g_FoodYpos,g_RandomFoodX,g_RandomFoodY,g_FoodWidth,g_FoodHeight,g_Food_Color);
+                
+                        }
+                        
+                        f_Creating_Food_on_Canvas(g_Ctx);
+                        
+                        console.log(g_RandomFoodX);
+                        
+                        console.log(g_RandomFoodY);
+                        
+                        g_PointsCounter++;
+                        
+                    }
+                    
+                    if(Random_food_Selection == 2){
+                        
+                        console.log("Size increase");
+                        
+                        Snake_Body.Actual_leng++;
+                        
+                        console.log(Snake_Body.Actual_leng);
+                
+                        g_RandomFoodX = Math.round(Math.random()*(g_CanvasWidth/g_Cell_Width - 1));
+                
+                        g_RandomFoodY = Math.round(Math.random()*(g_CanvasHeight/g_Cell_Height - 1));
+                        
+                        Random_food_Selection = Math.round(Math.random() * 3);
+                        
+                        for(i = 0; i < 5; i++){
+                
+                            Food[i] = new C_Food(g_FoodXpos,g_FoodYpos,g_RandomFoodX,g_RandomFoodY,g_FoodWidth,g_FoodHeight,g_Food_Color);
+                            
+                        }
+                        
+                        f_Creating_Food_on_Canvas(g_Ctx);
+                        
+                        console.log(g_RandomFoodX);
+                        
+                        console.log(g_RandomFoodY);
+                        
+                        g_PointsCounter++;
+                        
+                    }
+                    
+                    if(Random_food_Selection == 3){
+                        
+                        console.log("Speed decrease");
+                        
+                        Snake_Body.Snake_Speed--;
+                        
+                        console.log(Snake_Body.Snake_Speed);
+                        
+                        g_RandomFoodX = Math.round(Math.random()*(g_CanvasWidth/g_Cell_Width - 1));
+                
+                        g_RandomFoodY = Math.round(Math.random()*(g_CanvasHeight/g_Cell_Height - 1));
+                        
+                        Random_food_Selection = Math.round(Math.random() * 3);
+                        
+                        for(i = 0; i < 5; i++){
+                
+                            Food[i] = new C_Food(g_FoodXpos,g_FoodYpos,g_RandomFoodX,g_RandomFoodY,g_FoodWidth,g_FoodHeight,g_Food_Color);
+                
+                        }
+                        
+                        f_Creating_Food_on_Canvas(g_Ctx);
+                        
+                        console.log(g_RandomFoodX);
+                        
+                        console.log(g_RandomFoodY);
+                        
+                        g_PointsCounter++;
+                        
+                    }
+                
+                }
+                
+                if(Cell2[0].Xpos + Cell2[0].Width > Food[0].Xpos && Cell2[0].Ypos + Cell2[0].Height > Food[0].Ypos && Cell2[0].Xpos < Food[0].Xpos + Food[0].Width && Cell2[0].Ypos < Food[0].Ypos + Food[0].Height){
+                    
+                    Timer_reset = true;
+                    
+                    if(Random_food_Selection == 0){
+                        
+                        console.log("Speed increased");
+                        
+                        Snake_Body2.Snake_Speed++;
+                        
+                        console.log(Snake_Body.Snake_Speed);
+                
+                        g_RandomFoodX = Math.round(Math.random()*(g_CanvasWidth/g_Cell_Width - 1));
+                
+                        g_RandomFoodY = Math.round(Math.random()*(g_CanvasHeight/g_Cell_Height - 1));
+                        
+                        Random_food_Selection = Math.round(Math.random() * 3);
+                        
+                        for(i = 0; i < 5; i++){
+                
+                            Food[i] = new C_Food(g_FoodXpos,g_FoodYpos,g_RandomFoodX,g_RandomFoodY,g_FoodWidth,g_FoodHeight,g_Food_Color);
+                
+                        }
+                        
+                        f_Creating_Food_on_Canvas(g_Ctx);
+                        
+                        console.log(g_RandomFoodX);
+                        
+                        console.log(g_RandomFoodY);
+                        
+                        g_PointsCounter2++;
+                         
+                    }
+                    
+                    if(Random_food_Selection == 1){
+                        
+                        console.log("Size decrease");
+                        
+                        Snake_Body2.Actual_leng--;
+                        
+                        console.log(Snake_Body.Actual_leng);
+                
+                        g_RandomFoodX = Math.round(Math.random()*(g_CanvasWidth/g_Cell_Width - 1));
+                
+                        g_RandomFoodY = Math.round(Math.random()*(g_CanvasHeight/g_Cell_Height - 1));
+                        
+                        Random_food_Selection = Math.round(Math.random() * 3);
+                        
+                        for(i = 0; i < 5; i++){
+                
+                            Food[i] = new C_Food(g_FoodXpos,g_FoodYpos,g_RandomFoodX,g_RandomFoodY,g_FoodWidth,g_FoodHeight,g_Food_Color);
+                
+                        }
+                        
+                        f_Creating_Food_on_Canvas(g_Ctx);
+                        
+                        console.log(g_RandomFoodX);
+                        
+                        console.log(g_RandomFoodY);
+                        
+                        g_PointsCounter2++;
+                        
+                    }
+                    
+                    if(Random_food_Selection == 2){
+                        
+                        console.log("Size increase");
+                        
+                        Snake_Body2.Actual_leng++;
+                        
+                        console.log(Snake_Body.Actual_leng);
+                
+                        g_RandomFoodX = Math.round(Math.random()*(g_CanvasWidth/g_Cell_Width - 1));
+                
+                        g_RandomFoodY = Math.round(Math.random()*(g_CanvasHeight/g_Cell_Height - 1));
+                        
+                        Random_food_Selection = Math.round(Math.random() * 3);
+                        
+                        for(i = 0; i < 5; i++){
+                
+                            Food[i] = new C_Food(g_FoodXpos,g_FoodYpos,g_RandomFoodX,g_RandomFoodY,g_FoodWidth,g_FoodHeight,g_Food_Color);
+                            
+                        }
+                        
+                        f_Creating_Food_on_Canvas(g_Ctx);
+                        
+                        console.log(g_RandomFoodX);
+                        
+                        console.log(g_RandomFoodY);
+                        
+                        g_PointsCounter2++;
+                        
+                    }
+                    
+                    if(Random_food_Selection == 3){
+                        
+                        console.log("Speed decrease");
+                        
+                        Snake_Body2.Snake_Speed--;
+                        
+                        console.log(Snake_Body.Snake_Speed);
+                        
+                        g_RandomFoodX = Math.round(Math.random()*(g_CanvasWidth/g_Cell_Width - 1));
+                
+                        g_RandomFoodY = Math.round(Math.random()*(g_CanvasHeight/g_Cell_Height - 1));
+                        
+                        Random_food_Selection = Math.round(Math.random() * 3);
+                        
+                        for(i = 0; i < 5; i++){
+                
+                            Food[i] = new C_Food(g_FoodXpos,g_FoodYpos,g_RandomFoodX,g_RandomFoodY,g_FoodWidth,g_FoodHeight,g_Food_Color);
+                
+                        }
+                        
+                        f_Creating_Food_on_Canvas(g_Ctx);
+                        
+                        console.log(g_RandomFoodX);
+                        
+                        console.log(g_RandomFoodY);
+                        
+                        g_PointsCounter2++;
+                        
+                    }
+                
+                }
+                
+                if(g_Secs == 5 && g_Times == 1){
+                    
+                    //console.log("yes");
+                    
+                    g_RandomFoodX = Math.round(Math.random()*(g_CanvasWidth/g_Cell_Width - 1));
+                
+                    g_RandomFoodY = Math.round(Math.random()*(g_CanvasHeight/g_Cell_Height - 1));
+                        
+                    Random_food_Selection = Math.round(Math.random() * 3);
+                        
+                    for(i = 0; i < 5; i++){
+                
+                        Food[i] = new C_Food(g_FoodXpos,g_FoodYpos,g_RandomFoodX,g_RandomFoodY,g_FoodWidth,g_FoodHeight,g_Food_Color);
+                
+                    }
+                        
+                    f_Creating_Food_on_Canvas(g_Ctx);
+                    
+                    g_Times--;
+                    
+                }
+                
+            }
+            
+            function f_Timer_for_Food(){
+                
+                if(Timer_reset === true){
+                    
+                    g_Secs = 1;
+                    
+                    Timer_reset = false;
+                    
+                }
+                
+                g_TimeCounter++;
+                
+                if(g_TimeCounter % 33 == 0){
+                    
+                    g_Secs++;
+                    
+                }
+                
+                if(g_Secs == 6){
+                    
+                    g_Secs = 1;
+                    
+                    g_Times++;
+                    
+                }
+                
+                console.log(g_Secs);
+                
+            }
+            
+            function f_Collision_self(){
+                
+                for(i = 2; i <= Snake_Body.Actual_leng; i++){
+                    
+                    if(Cell[0].Xpos + Cell[0].Width > Cell[i].Xpos && Cell[0].Ypos + Cell[0].Height > Cell[i].Ypos && Cell[0].Xpos < Cell[i].Xpos + Cell[i].Width && Cell[0].Ypos < Cell[i].Ypos + Cell[i].Height){
+                        
+                        console.log("yes");
+                        
+                        Snake_Body.isAlive = false;
+                        
+                    }
+                    
+                }
+                
+                for(i = 2; i <= Snake_Body2.Actual_leng; i++){
+                    
+                    if(Cell2[0].Xpos + Cell2[0].Width > Cell2[i].Xpos && Cell2[0].Ypos + Cell2[0].Height > Cell2[i].Ypos && Cell2[0].Xpos < Cell2[i].Xpos + Cell2[i].Width && Cell2[0].Ypos < Cell2[i].Ypos + Cell2[i].Height){
+                        
+                        console.log("yes");
+                        
+                        Snake_Body2.isAlive = false;
+                        
+                    }
+                    
+                }
+                
+            }
+            
+            function f_Collision_for_2_Player_Game(){
+                
+                for(i = 1; i <= Snake_Body2.Actual_leng; i++){
+                    
+                    if(Cell[0].Xpos + Cell[0].Width > Cell2[i].Xpos && Cell[0].Ypos + Cell[0].Height > Cell2[i].Ypos && Cell[0].Xpos < Cell2[i].Xpos + Cell2[i].Width && Cell[0].Ypos < Cell2[i].Ypos + Cell2[i].Height){
+                        
+                        alert("Player 2 won");
+                        
+                        Snake_Body.isAlive = false;
+                        
+                    }
+                    
+                }
+                
+                for(i = 1; i <= Snake_Body.Actual_leng; i++){
+                    
+                    if(Cell2[0].Xpos + Cell2[0].Width > Cell[i].Xpos && Cell2[0].Ypos + Cell2[0].Height > Cell[i].Ypos && Cell2[0].Xpos < Cell[i].Xpos + Cell[i].Width && Cell2[0].Ypos < Cell[i].Ypos + Cell[i].Height){
+                        
+                        alert("Player 1 won");
+                        
+                        Snake_Body2.isAlive = false;
+                        
+                    }
+                    
+                }
+                
+                if(Cell[0].Xpos + Cell[0].Width > Cell2[0].Xpos && Cell[0].Ypos + Cell[0].Height > Cell2[0].Ypos && Cell[0].Xpos < Cell2[0].Xpos + Cell2[0].Width && Cell[0].Ypos < Cell2[0].Ypos + Cell2[0].Height){
+                    
+                    alert("Draw");
+                    
+                    Snake_Body.isAlive = false;
+                    
+                    Snake_Body2.isAlive = false;
+                    
+                }
+                
+            }
+            
+            function f_Reset(){
+                
+                g_FrameCounter = 0;
+                
+                g_TimeCounter = 0;
+                
+                g_PointsCounter = 0;
+                
+                Direction = "left";
+                
+                g_Times = 1;
+                
+                g_Secs = 0;
+                
+                g_Timer = 0;
+                
+                g_Minutes = 0;
+                
+                g_second = 0;
+                
+                Snake_Body = new C_Snake(g_Snake_leng,g_leng,g_Cell_Xpos1,g_Cell_Ypos1);
+                
+                Snake_Body.m_Creating_Snake();
+                
+                Snake_Body.isAlive = true;
+                
+                g_RandomFoodX = Math.round(Math.random()*(g_CanvasWidth/g_Cell_Width - 1));
+                
+                g_RandomFoodY = Math.round(Math.random()*(g_CanvasHeight/g_Cell_Height - 1));
+                        
+                Random_food_Selection = Math.round(Math.random() * 3);
+                        
+                for(i = 0; i < 5; i++){
+                
+                    Food[i] = new C_Food(g_FoodXpos,g_FoodYpos,g_RandomFoodX,g_RandomFoodY,g_FoodWidth,g_FoodHeight,g_Food_Color);
+                
+                }
+                        
+                f_Creating_Food_on_Canvas(g_Ctx);
+                
+            }
+            
+            function f_Reset_for_2nd_Player(){
+                
+                g_FrameCounter = 0;
+                
+                g_TimeCounter = 0;
+                
+                g_PointsCounter = 0;
+                
+                g_PointsCounter2 = 0;
+                
+                Direction = "left";
+                
+                Direction2 = "left";
+                
+                g_Times = 1;
+                
+                g_Secs = 0;
+                
+                g_Timer = 0;
+                
+                g_Minutes = 0;
+                
+                g_second = 0;
+                
+                Snake_Body = new C_Snake(g_Snake_leng,g_leng,g_Cell_Xpos1,g_Cell_Ypos1);
+                
+                Snake_Body.m_Creating_Snake();
+                
+                Snake_Body2 = new C_Snake(g_Snake_leng,g_leng,g_Cell_Xpos2,g_Cell_Ypos2);
+                
+                Snake_Body2.m_Creating_Snake();
+                
+                Snake_Body.isAlive = true;
+                
+                Snake_Body2.isAlive = true;
+                
+                g_RandomFoodX = Math.round(Math.random()*(g_CanvasWidth/g_Cell_Width - 1));
+                
+                g_RandomFoodY = Math.round(Math.random()*(g_CanvasHeight/g_Cell_Height - 1));
+                        
+                Random_food_Selection = Math.round(Math.random() * 3);
+                        
+                for(i = 0; i < 5; i++){
+                
+                    Food[i] = new C_Food(g_FoodXpos,g_FoodYpos,g_RandomFoodX,g_RandomFoodY,g_FoodWidth,g_FoodHeight,g_Food_Color);
+                
+                }
+                        
+                f_Creating_Food_on_Canvas(g_Ctx);
+                
+            }
+            
+            function f_Timer(){
+                
+                g_FrameCounter++;
+                
+                if(g_FrameCounter % 33 == 0){
+                    
+                    g_second++;
+                    
+                    g_Timer++;
+                    
+                }
+                
+                if(g_second > 60)g_second = 0;
+                
+                g_Minutes = g_Timer/60 | 0;
+                
+            }
+            
+            function f_Draw_Timer_On_Canvas(l_Ctx){
+                
+                l_Ctx.fillStyle = "silver";
+                
+                l_Ctx.font = "28px Arial";
+                
+                l_Ctx.fillText((g_Minutes < 10 ? "0" + g_Minutes:g_Minutes) + ":" + (g_second < 10 ? "0" + g_second:g_second),120 ,45);
+                
+                l_Ctx.fillStyle = "black";
+                
+                l_Ctx.font = "28px Arial";
+                
+                l_Ctx.fillText("Timer : ",25 ,45);
+                
+            }
+            
+            function f_Draw_Timer_On_Canvas_For_2nd_Player(l_Ctx){
+                
+                l_Ctx.fillStyle = "silver";
+                
+                l_Ctx.font = "20px Arial";
+                
+                l_Ctx.fillText((g_Minutes < 10 ? "0" + g_Minutes:g_Minutes) + ":" + (g_second < 10 ? "0" + g_second:g_second),400 ,45);
+                
+                l_Ctx.fillStyle = "black";
+                
+                l_Ctx.font = "20px Arial";
+                
+                l_Ctx.fillText("Timer : ",330 ,45);
+                
+            }
+            
+            function f_Draw_PointsCounter_on_Canvas(l_Ctx){
+                
+                l_Ctx.fillStyle = "silver";
+                
+                l_Ctx.font = "28px Arial";
+                
+                l_Ctx.fillText((g_PointsCounter < 10 ? "0" + g_PointsCounter:g_PointsCounter),725 ,45);
+                
+                l_Ctx.fillStyle = "black";
+                
+                l_Ctx.font = "28px Arial";
+                
+                l_Ctx.fillText("Total Points : ",558 ,45);
+                
+            }
+            
+            function f_Draw_PointsCounter_on_Canvas_for_2nd_Player(l_Ctx){
+                
+                l_Ctx.fillStyle = "silver";
+                
+                l_Ctx.font = "20px Arial";
+                
+                l_Ctx.fillText((g_PointsCounter < 10 ? "0" + g_PointsCounter:g_PointsCounter),750 ,45);
+                
+                l_Ctx.fillText((g_PointsCounter2 < 10 ? "0" + g_PointsCounter2:g_PointsCounter2),250 ,45);
+                
+                l_Ctx.fillStyle = "black";
+                
+                l_Ctx.font = "20px Arial";
+                
+                l_Ctx.fillText("Total Points for Player 1 : ",525 ,45);
+                
+                l_Ctx.fillText("Total Points for Player 2 : ",25 ,45);
+                
+            }
+            
+            function f_Player_1_Game_page(){
+                
+                Snake_Body.m_Move_Snake();
+                
+                Snake_Body.m_UpdateSnakePos();
+                
+                f_Collision();
+                
+                f_Collision_self();
+                
+                f_Timer();
+                
+                f_Timer_for_Food();
+                
+                f_food();
+                
+                if(Snake_Body.isAlive === false){
+                    
+                    f_Reset();
+                       
+                }
+                
+                f_Clear_and_Draw_Canvas();
+                
+                f_Draw_PointsCounter_on_Canvas(g_Ctx);
+                
+                f_Draw_Timer_On_Canvas(g_Ctx);
+                
+                f_Creating_Food_on_Canvas(g_Ctx);
+                
+                Snake_Body.m_Drawing_Snake_Body(g_Ctx);
+                
+            }
+            
+            function f_Player_2_Game_page(){
+                
+                Snake_Body2.m_Move_Snake2();
+                
+                Snake_Body.m_Move_Snake();
+                
+                Snake_Body2.m_UpdateSnakePos2();
+                
+                Snake_Body.m_UpdateSnakePos();
+                
+                f_Collision();
+                
+                f_Collision_self();
+                
+                f_Collision_for_2_Player_Game();
+                
+                f_Timer();
+                
+                f_Timer_for_Food();
+                
+                f_food();
+                
+                if(g_PointsCounter > 10){
+                    
+                    alert("Player 1 won");
+                    
+                    f_Reset_for_2nd_Player();
+                    
+                }
+                
+                if(g_PointsCounter2 > 10){
+                    
+                    alert("player 2 won");
+                    
+                    f_Reset_for_2nd_Player();
+                    
+                }
+                
+                if(Snake_Body.isAlive === false || Snake_Body2.isAlive === false){
+                    
+                    f_Reset_for_2nd_Player();
+                       
+                }
+                
+                if(g_PointsCounter == 10)
+                
+                f_Clear_and_Draw_Canvas();
+                
+                f_Draw_PointsCounter_on_Canvas_for_2nd_Player(g_Ctx);
+                
+                f_Draw_Timer_On_Canvas_For_2nd_Player(g_Ctx);
+                
+                f_Creating_Food_on_Canvas(g_Ctx);
+                
+                Snake_Body2.m_Drawing_Snake_Body2(g_Ctx);
+                
+                Snake_Body.m_Drawing_Snake_Body(g_Ctx);
+                
+            }
+            
+            function f_GameTitle(l_Ctx){
+                
+                l_Ctx.font = "70px Comic Sans MS";
+                
+                l_Ctx.fillStyle = "red";
+                
+                l_Ctx.fillText("S",197 ,90);
+                
+                l_Ctx.fillStyle = "green";
+                
+                l_Ctx.fillText("G",410 ,90);
+                
+                l_Ctx.fillStyle = "black";
+                
+                l_Ctx.fillText("nake   ame",243.5 ,90);
+                
+                l_Ctx.fillText("_________",199 ,92);
+                
+            }
+            
+            
+            
+            function f_GameLoop(){
+                
+                if(g_CurrentTimes == 1){
+            
+                    g_CurrentTimes--;
+
+                    g_StartGame = true;
+           
+                }
+                
+                if(g_StartGame){
+                    
+                    f_Clear_and_Draw_Canvas();
+                    
+                    f_GameTitle(g_Ctx);
+                    
+                    g_Ctx.fillStyle = "black";
+
+                    g_Ctx.font = "35px Arial";
+
+                    g_Ctx.fillText("Press Space Bar To Start", 200,225);
+                    
+                    g_Ctx.fillStyle = "orange";
+                
+                    g_Ctx.font = "55px Comic Sans MS";
+                
+                    g_Ctx.fillText("C",290 ,305);
+                
+                    g_Ctx.fillStyle = "black";
+                
+                    g_Ctx.fillText(" ontrols",307 ,305);
+                    
+                    g_Ctx.font = "40px Arial";
+                    
+                    g_Ctx.fillText(" Snake's Movement",235 ,350);
+                    
+                    g_Ctx.font = "30px Arial";
+                    
+                    g_Ctx.fillText(" * Up arrow",65 ,400);
+                
+                    g_Ctx.fillText(" * Down arrow",65 ,435);
+                
+                    g_Ctx.fillText(" * Left arrow",65 ,470);
+                
+                    g_Ctx.fillText(" * Right arrow",65 ,505);
+                    
+                    
+           
+                    return;
+           
+                }
+                
+                f_Player_1_Game_page();
+                
+            }
+            
+            var Snake_Body = new C_Snake(g_Snake_leng,g_leng,g_Cell_Xpos1,g_Cell_Ypos1);
+            Snake_Body.m_Creating_Snake();
+            
+            var Snake_Body2 = new C_Snake(g_Snake_leng,g_leng,g_Cell_Xpos2,g_Cell_Ypos2);
+            Snake_Body2.m_Creating_Snake2();
+            
+            for(i = 0; i < 5; i++){
+                
+                Food[i] = new C_Food(g_FoodXpos,g_FoodYpos,g_RandomFoodX,g_RandomFoodY,g_FoodWidth,g_FoodHeight,g_Food_Color);
+                
+            }
+            
+            function f_Clear_and_Draw_Canvas(){
+                
+                g_Ctx.clearRect(g_CanvasXpos,g_CanvasYpos,g_CanvasWidth,g_CanvasHeight);
+                
+                g_Ctx.strokeStyle = "black";
+                
+                g_Ctx.lineWidth = 1;
+                
+                g_Ctx.strokeRect(g_CanvasXpos,g_CanvasYpos,g_CanvasWidth,g_CanvasHeight);
+                
+            }
+        
+        </script>
+    
+    
+    
+
+<br /><br />
+<h3>Author: Name</h3>
+
+
+
+<h3>Objective:</h3>
+
+<ul>
+
+    <li>The objective of the game is to successfully eat all the pellets on the canvas.</li>
+
+    <li>The position of the pellets are random and have different property.</li>
+    
+    <li>The game restarts when snake collides with a wall.</li>
+    
+</ul>
+
+<br /><br />
+
+<h3>Logic Design and Implementation:</h3> 
+
+<ul>
+<li>Use suqare objects to generate body of the snake under the class cell.</li>
+
+<li>Write proper logics for collision with walls and self.</li>
+
+<li>Maintain a separate class for generating pellets and have separate property for each color of pellets and generating the snakes body which can increase in size and speed when pellet is eaten.</li>
+
+<li>Create variables to hold the score and time and display it on the canvas.</li>
+
+<li>Create logics to determine when the game is over and restart the game agains.</li>
+
+</ul>
+
+<br /><br />
+
+<h3>Scope For Improvement:</h3>
+
+<ul><li>Implement Audio to the game.</ul>
+
+  </div> 
+
+  <!--content-->
+
+</div> <!-- Container ends here -->
+
+<!--  Footer -->
+
+<div id="info-site">
+
+ </div>
+
+</body>
+
+</html>
