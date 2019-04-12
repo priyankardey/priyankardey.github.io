@@ -41,9 +41,30 @@
     
 <canvas id='canvas' width="500" height="500" style=' background-color:#FFF;'>
 </canvas>
+    
+<!DOCTYPE html>
+<html>
+<head>
+  
+  <title>2048</title>
+</head>
+<body>
+  <h1>2048</h1>
+  <p id="score"></p>
+  <div id="size-bloc">
+    <p id="size-title">Size : </p>
+    <input id="size" type="number" value="4">
+    <input id="change-size" type="button" value="Ok">
+    <div class="clear"></div>
+  </div>
+  <div id="canvas-block">
+      </div>
+  <script src="../game2/script.js"></script>
+</body>
+</html>  
 
 <br /><br />
-<h3>Author: Name</h3>
+<h3>Author: Priyankar Dey</h3>
 
 
 
@@ -51,13 +72,13 @@
 
 <ul>
 
-    <li>The objective of the game is to successfully arrange the shapes in such a way that they form complete horizontal blocks which are then cleared from the game screen.</li>
+    <li>The objective of the game is to get the highest score you can get.</li>
 
-    <li>Shapes are randomly generated and they move downwards until they land up on the ground or on top of another shape block.</li>
+    <li>Number you get and the position they will appear are random and they can be move up if it is not at the top most blocks, move down if it is not at the bottom most blocks, move right if it is not at the right most blocks and move left if it is not at the left most blocks.</li>
 
-    <li>The downward speed of the shapes increase depending upon the score.</li>
+    <li>The score incease based on the total number you have on the board currently.</li>
     
-    <li>The game gets over when the last generated block can not be accomodated successfully.</li>
+    <li>The game gets over when all the blocks gets filled up.</li>
     
 </ul>
 
@@ -66,17 +87,15 @@
 <h3>Logic Design and Implementation:</h3> 
 
 <ul>
-<li>Use suqare objects to generate the different shapes under the shape class.</li>
+<li>Made a separate class to make grids.</li>
 
-<li>Write proper logics for shape transformations on the hit of &quot;Space&quot; key.</li>
+<li>Write proper logics for move number blocks on the hit of &quot;arrow keys&quot; key.</li>
 
-<li>Maintain a separate Environment class which changes the color of those particular nodes that coincide with the shape that lands either on the floor or on top of another shape block.</li>
+<li>Maintain a separate Environment class which will create new number and a class to add them and change their color based on the number.</li>
 
-<li>Clear the horizontal blocks without any gaps using simple logic.</li>
+<li>Used proper naming of variable and classes for easy understanding.</li>
 
-<li>Create variables to hold the score and display the next shape and the shape that's put on hold.</li>
-
-<li>Create logics to determine when the game is over and display it on the screen.</li>
+<li>Create logics to determine when the game is over.</li>
 
 </ul>
 
